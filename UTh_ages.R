@@ -12,6 +12,10 @@
 
 # CREATNG BLANK DIRECTORIES TO STORE OUTPUTS -----
 
+if (!dir.exists("results")) {
+  dir.create("results")
+}
+
   # To store when correcting ages for one assumed ratio
 if(!dir.exists('results/UTh MC calculations')){
   dir.create('results/UTh MC calculations')
@@ -30,6 +34,7 @@ if(!dir.exists('figures')){ # not sure if this needed?
 
 # LOADING THE REQUIRED PACKAGES -----
 
+library(writexl)
 library(ggplot2)
 library(dplyr)
 library(tidyr)
@@ -42,7 +47,7 @@ library(ggridges)
 library(plotly)
 library(cmna) # for root-finding function (bisection method)
 
-# LOADING THE FUNCTIONS ---- (need to test if this works)
+# LOADING THE FUNCTIONS ---- 
 UTh_functions <- list.files(file.path(getwd(), "functions"))
 UTh_functions <- UTh_functions[grepl(".R", UTh_functions)]
 sapply(paste0("functions/", UTh_functions), source)
@@ -63,11 +68,12 @@ n.iter=1000000 # number of iterations to run MC sampling
 # CALCULATING AGES USING AN ASSUMED INITIAL THORIUM RATIO -----
 
 t_corr_conventional=lapply(X=1:nrow(UTh_lab_raw),FUN=CalcT_assumed) %>% rbindlist()
-write.csv(x=t_corr_conventional,'UTh_t_corr_MC_conventional.csv')
+write_xlsx(t_corr_conventional,'UTh_t_corr_MC_conventional.xlsx') #saving the results
 
 # SENSITIVITY ANALYSIS: CALCULATING CORRECTED AGES WITH A RANGE OF INITIAL THORIUM VALUES ----
 
 t_sensitivity <- T_sensitivity_test(UTh_lab_raw) 
+write_xlsx(t_sensitivity, "UTh_sensitivity_analysis.xlsx") #saving the results
 
 # THINGS TO ADD: additional lines (script or function) for plotting capabilities?
   
