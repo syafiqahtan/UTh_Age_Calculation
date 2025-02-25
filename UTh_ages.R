@@ -42,6 +42,11 @@ library(ggridges)
 library(plotly)
 library(cmna) # for root-finding function (bisection method)
 
+# LOADING THE FUNCTIONS ---- (need to test if this works)
+UTh_functions <- list.files(file.path(getwd(), "functions"))
+UTh_functions <- UTh_functions[grepl(".R", UTh_functions)]
+sapply(paste0("functions/", UTh_functions), source)
+
 # LOADING THE LAB FILE AND DEFINING THE CONSTANTS 
   # loading the excel file with the lab-calculated ratios
 UTh_lab_raw = readxl::read_xlsx('data/subset_TKKR-LZRS_UTh_labmeasurements_raw_formatted.xlsx')
