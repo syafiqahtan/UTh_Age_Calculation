@@ -26,7 +26,7 @@ if(!dir.exists('results/UTh sensitivity analysis')){
   dir.create('results/UTh sensitivity analysis')
 }
 
-if(!dir.exists('figures')){ # not sure if this needed?
+if(!dir.exists('figures')){ 
   dir.create('figures')
 }
 
@@ -35,6 +35,7 @@ if(!dir.exists('figures')){ # not sure if this needed?
 # LOADING THE REQUIRED PACKAGES -----
 
 library(writexl)
+library(ggrepel)
 library(ggplot2)
 library(dplyr)
 library(tidyr)
@@ -75,5 +76,7 @@ write_xlsx(t_corr_conventional,'UTh_t_corr_MC_conventional.xlsx') #saving the re
 t_sensitivity <- T_sensitivity_test(UTh_lab_raw) 
 write_xlsx(t_sensitivity, "UTh_sensitivity_analysis.xlsx") #saving the results
 
-# THINGS TO ADD: additional lines (script or function) for plotting capabilities?
-  
+# Plotting the results from the sensitivity analysis
+
+sens_plot <- sensitivity_plot(t_sensitivity) # ribbons show 2sd uncertainty
+   
