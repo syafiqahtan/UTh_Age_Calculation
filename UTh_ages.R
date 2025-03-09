@@ -8,7 +8,8 @@
 # TL;DR: this script can calculate ages using one assumed initial thorium ratio (currently it is 4e-6, sd = 2e-6) 
 # TL;DR: it can also conduct sensitivity analysis, where we calculate ages using a range of initial thorium values
 
-# This script and any additional functions were written by Syafiqah, last modified on 25 February 2025
+# This script and any additional functions were written by Syafiqah, last modified on 9 March 2025
+  # 9mar: changed the plotting function. added another sub-directory
 
 # CREATNG BLANK DIRECTORIES TO STORE OUTPUTS -----
 
@@ -28,6 +29,11 @@ if(!dir.exists('results/UTh sensitivity analysis')){
 
 if(!dir.exists('figures')){ 
   dir.create('figures')
+}
+
+# To store figure outputs from sensitivity analysis
+if(!dir.exists('figures/sensitivity')){
+  dir.create('figures/sensitivity')
 }
 
 # IMPORTANT: make sure that lab data is in a file called 'data'
@@ -55,7 +61,7 @@ sapply(paste0("functions/", UTh_functions), source)
 
 # LOADING THE LAB FILE AND DEFINING THE CONSTANTS 
   # loading the excel file with the lab-calculated ratios
-UTh_lab_raw = readxl::read_xlsx('data/subset_TKKR-LZRS_UTh_labmeasurements_raw_formatted.xlsx')
+UTh_lab_raw = readxl::read_xlsx('data/TKKR/UTh_TKKR-LZRS-TLKS.xlsx')
 
   # specifying decay constants
 lambda_230 = 9.1705*10^-6 # Th230 (Cheng et al., 2013)
