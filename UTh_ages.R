@@ -8,8 +8,11 @@
 # TL;DR: this script can calculate ages using one assumed initial thorium ratio (currently it is 4e-6, sd = 2e-6) 
 # TL;DR: it can also conduct sensitivity analysis, where we calculate ages using a range of initial thorium values
 
-# This script and any additional functions were written by Syafiqah, last modified on 9 March 2025
+# This script and any additional functions were written by Syafiqah, last modified on 24 March 2025
   # 9mar: changed the plotting function. added another sub-directory
+  # 24mar: added variables that can be changed: upper and lower age bounds, initial thorium ratio (for conventional calculation), 
+  #.       d344Ui results in the conventional list
+
 
 # CREATNG BLANK DIRECTORIES TO STORE OUTPUTS -----
 
@@ -61,7 +64,7 @@ sapply(paste0("functions/", UTh_functions), source)
 
 # LOADING THE LAB FILE AND DEFINING THE CONSTANTS 
   # loading the excel file with the lab-calculated ratios
-UTh_lab_raw = readxl::read_xlsx('data/TKKR/UTh_TKKR-LZRS-TLKS.xlsx')
+UTh_lab_raw = readxl::read_xlsx('data/subset_TKKR-LZRS_UTh_labmeasurements_raw_formatted.xlsx')
 
   # specifying decay constants
 lambda_230 = 9.1705*10^-6 # Th230 (Cheng et al., 2013)
@@ -74,13 +77,27 @@ n.iter=1000000 # number of iterations to run MC sampling
 
 # CALCULATING AGES USING AN ASSUMED INITIAL THORIUM RATIO -----
 
-t_corr_conventional=lapply(X=1:nrow(UTh_lab_raw),FUN=CalcT_assumed) %>% rbindlist()
-write_xlsx(t_corr_conventional,'UTh_t_corr_MC_conventional.xlsx') #saving the results
+# t_corr_conventional=lapply(X=1:nrow(UTh_lab_raw),FUN=CalcT_assumed) %>% rbindlist()
+# write_xlsx(t_corr_conventional,'UTh_t_corr_MC_conventional.xlsx') #saving the results
+
+t_corr_conventional = lapply(seq_len(nrow(UTh_lab_raw)), function(i) {
+  CalcT_assumed(UTh_lab_raw[i, , drop=FALSE], # drop = FALSE keeps each row as df
+                   maxBound = 15000, # change the following accordingly
+                   minBound = 4000,
+                   initialThoriumMean = 4*10^-6,
+                   sdThorium = 2*10^-6) 
+}) %>% rbindlist()
+
+write_xlsx(t_corr_conventional, 'UTh_t_corr_MC_conventional.xlsx') # Saving results
 
 # SENSITIVITY ANALYSIS: CALCULATING CORRECTED AGES WITH A RANGE OF INITIAL THORIUM VALUES ----
 
-t_sensitivity <- T_sensitivity_test(UTh_lab_raw) 
-write_xlsx(t_sensitivity, "UTh_sensitivity_analysis.xlsx") #saving the results
+  # for now, changing the ratio from 0 to 10e-6. Need to go into function if user wants to change this.   
+
+t_sensitivity <- T_sensitivity_test(UTh_lab_raw, 
+                                       minBound = 4000, # change the bounds accordingly
+                                       maxBound = 15000) 
+write_xlsx(t_sensitivity, "UTh_sensitivity_analysis_test.xlsx") #saving the results
 
 # Plotting the results from the sensitivity analysis
 

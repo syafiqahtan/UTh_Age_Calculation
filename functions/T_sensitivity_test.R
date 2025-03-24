@@ -2,9 +2,11 @@
 # varying initial thorium values. By changing the value from 0 to 10e-6, in increments of 1e-6, this code
 # uses an MC approach to calculating ages.
 
-# This function was written by Syafiqah, and last modified on 25 February 2025
+# This function was written by Syafiqah, and last modified on 24 March 2025  
+  #25Feb25: original function written
+  #24Mar25: added more argumemnts so that user can change min and max ages from main script
 
-T_sensitivity_test <- function(x) { # x calls the data frame with the lab reported data
+T_sensitivity_test <- function(x, minBound, maxBound) { # x calls the data frame with the lab reported data
   
   ## ------ CALCULATING AGES FOR VARIOUS INITIAL THORIUM VALUES USING MC APPROACH ------ ##
   
@@ -29,7 +31,7 @@ T_sensitivity_test <- function(x) { # x calls the data frame with the lab report
         sampleID_i <- df$sampleID
         labID_i <- df$labID
         
-        result <- CalcT_i(Th230_U238_a_i, d234U_m_i, Th230_Th232_atom_i, Th232ppt_i, U238ppt_i)
+        result <- CalcT_i(Th230_U238_a_i, d234U_m_i, Th230_Th232_atom_i, Th232ppt_i, U238ppt_i, minBound, maxBound)
         
         # Convert result to data frame with sample identifiers
         data.frame(sampleID = sampleID_i, labID = labID_i, result)
