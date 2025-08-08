@@ -12,6 +12,8 @@
   # 9mar: changed the plotting function. added another sub-directory
   # 24mar: added variables that can be changed: upper and lower age bounds, initial thorium ratio (for conventional calculation), 
   #.       d344Ui results in the conventional list
+  # updated on 8 August 2025 to include a function to plot all the results 
+    # and to create a file that calculates min and max corrected ages from sensi analysis
 
 
 # CREATNG BLANK DIRECTORIES TO STORE OUTPUTS -----
@@ -56,6 +58,7 @@ library(readr)
 library(ggridges)
 library(plotly)
 library(cmna) # for root-finding function (bisection method)
+library(randomcoloR)
 
 # LOADING THE FUNCTIONS ---- 
 UTh_functions <- list.files(file.path(getwd(), "functions"))
@@ -99,7 +102,20 @@ t_sensitivity <- T_sensitivity_test(UTh_lab_raw,
                                        maxBound = 15000) 
 write_xlsx(t_sensitivity, "UTh_sensitivity_analysis_test.xlsx") #saving the results
 
-# Plotting the results from the sensitivity analysis
+# Plotting the results from the sensitivity analysis (individual plots) ------
 
-sens_plot <- sensitivity_plot(t_sensitivity) # ribbons show 2sd uncertainty
+individual_sens_plot <- sensitivity_plot(t_sensitivity) # ribbons show 2sd uncertainty
+
+# Plotting the results from the sensitivity analysis (all the results) -----
+
+# inFile <- readxl::read_xlsx("UTh_sensitivity_analysis_test_TKKR_diplo.xlsx")
+# for Gina(!!), load the inFile from the output of sensi analysis
+
+all_results_sens_plot <- plotAllSensResults(inFile, minBound = 0, maxBound = 400) # change age range/y-axis limits as needed
+  
+ggsave("figures/all_sensi_results_plot.png", all_results_sens_plot, width = 7, height = 5) # change figure dimensions needed
    
+# Calculating another data sheet that gives min and max ages from sensitivity analysis
+
+full_uncertainty_SA <- fullUnc_sensi(inFile)
+writexl::write_xlsx(full_uncertainty_SA, "results/full_uncertaintyFromSensitivity.xlsx")
